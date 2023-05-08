@@ -9,14 +9,17 @@ class State
         std::vector<int> board;
         int n; // represents the size of the board
         int blank; // represents the position of the empty tile
-        std::vector<int> moves; // holds the moves
     public:
+        std::vector<int> moves; // holds the moves
         State(int);
+        State(const State&);
         ~State();
-        bool move(int, State);
+        bool move(int, State&);
         void printState();
+        bool check();
+        int getMoves();
+        void solveUniform();
 };
-
 
 
 #endif
