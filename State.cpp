@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <map>
+#include <cmath>
 
 State::State(int n)
 {
@@ -103,14 +105,14 @@ void State::printState()
     {
         for (int j = 0; j < n; ++j)
         {
-            // if (board[i * n + j] != -1)
+            if (board[i * n + j] != -1)
             {
-                std::cout << board[i * n + j] << " ";
+                std::cout << board[i * n + j] << "\t";
             }
-            // else
-            // {
-            //     std::cout << "* ";
-            // }
+            else
+            {
+                std::cout << "*\t";
+            }
         }
         std::cout << std::endl;
     }
@@ -132,31 +134,153 @@ bool State::check()
     return true;
 }
 
-int State::getMoves()
+const int State::getMoves()
 {
     return moves.size();
 }
 
-bool operator<(const State &s1, const State &s2)
+void State::setMisplaced()
 {
-    return s1.moves.size() < s2.moves.size();
+    int count = 0;
+    for (unsigned int i = 0; i < board.size(); ++i)
+    {
+        if (board[i] != -1 && board[i] != (i + 1))
+        {
+            count++;
+        }
+    }
+    misplaced = count;
 }
 
-void State::solveUniform()
+const int State::getMisplaced()
 {
-    std::queue<State> pq;
+    return misplaced;
+}
+
+void State::setEuclidean()
+{
+    double count = 0;
+    int deltaX = 0;
+    int deltaY = 0;
+    for (unsigned int i = 0; i < board.size(); ++i)
+    {
+        if (board[i] != -1)
+        {
+            deltaX = (i % n) - ((board[i] - 1) % n);
+            deltaY = (i / n) - ((board[i] - 1) / n);
+            count += sqrt(deltaX * deltaX + deltaY * deltaY);
+        }
+    }
+    euclidean = count;
+}
+
+const double State::getEuclidean()
+{
+    return euclidean;
+}
+
+struct Uniform
+{
+    const bool operator()(State &s1, State &s2)
+    {
+        return (s1.getMoves() > s2.getMoves());
+    }
+};
+
+struct Misplaced
+{
+    const bool operator()(State &s1, State &s2)
+    {
+        return (s1.getMoves() + s1.getMisplaced() > s2.getMoves() + s2.getMisplaced());
+    }
+};
+
+struct Euclidean
+{
+    const bool operator()(State &s1, State &s2)
+    {
+        return (s1.getMoves() + s1.getEuclidean() > s2.getMoves() + s2.getEuclidean());
+    }
+};
+
+void State::solveUniform(std::vector<int> &moves)
+{
+    std::priority_queue<State, std::vector<State>, Uniform> pq;
     pq.push(*this);
     int count = 0;
 
     while (!pq.empty())
     {
-        std::cout << "count: " << count++ << std::endl;
-        State curr = pq.front();
+        State curr = pq.top();
+        pq.pop();
+        std::cout << "Expanding state: " << std::endl;
+
+        if (curr.check())
+        {
+            std::cout << "solution found " << std::endl;
+            return;
+        }
+        else
+        {
+            for (int i = 0; i < 4; ++i)
+            {
+                State newState = State(curr);
+                if (curr.move(i, newState))
+                {
+                    pq.push(newState);
+                }
+            }
+        }
+    }
+}
+
+void State::solveMisplaced(std::vector<int> &moves)
+{
+    std::priority_queue<State, std::vector<State>, Misplaced> pq;
+
+    pq.push(*this);
+    int count = 0;
+
+    while (!pq.empty())
+    {
+        State curr = pq.top();
+        pq.pop();
+        // curr.printState();
+
+        if (curr.check())
+        {
+            std::cout << "solution found " << std::endl;
+            return;
+        }
+        else
+        {
+            for (int i = 0; i < 4; ++i)
+            {
+                State newState = State(curr);
+                if (curr.move(i, newState))
+                {
+                    newState.setMisplaced();
+                    pq.push(newState);
+                }
+            }
+        }
+    }
+}
+
+void State::solveEuclidean(std::vector<int> &moves)
+{
+    std::priority_queue<State, std::vector<State>, Euclidean> pq;
+
+    pq.push(*this);
+    int count = 0;
+
+    while (!pq.empty())
+    {
+        State curr = pq.top();
         pq.pop();
 
         if (curr.check())
         {
-            // done
             std::cout << "solution found " << std::endl;
             return;
         }
