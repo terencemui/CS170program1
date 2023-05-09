@@ -18,6 +18,7 @@ class State
         State(const State&);
         State(int, std::vector<int>);
         ~State();
+        void createBoard(std::vector<int>&);
         bool move(int, State&);
         void printState();
         bool check();

@@ -44,7 +44,9 @@ int main()
                 board.push_back(curr); 
             }
 
-        State bingbong(dim, board); 
+
+        State bingbong(dim);
+        bingbong.createBoard(board); 
         std::cout << "Please enter which way you would like to solve the puzzle (1: euclidean, 2: misplaced, 3: uniform):" << std::endl; 
         std::cin >> option; 
         if (option == 1){
