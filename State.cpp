@@ -32,6 +32,18 @@ State::~State()
 {
 }
 
+void State::createBoard(std::vector<int>& board)
+{
+    this->board = board;
+    for (unsigned int i = 0; i < board.size(); ++i)
+    {
+        if (board.at(i) == -1)
+        {
+            blank = i;
+        }
+    }
+}
+
 bool State::move(int direction, State &newState)
 {
     // 0, 1, 2, 3 -> N, E, S, W
