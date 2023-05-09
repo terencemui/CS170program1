@@ -25,9 +25,11 @@ class State
         const int getMisplaced();
         void setEuclidean();
         const double getEuclidean();
-        void solveUniform(std::vector<int>&);
-        void solveMisplaced(std::vector<int>&);
-        void solveEuclidean(std::vector<int>&);
+        void solveUniform();
+        void solveMisplaced();
+        void solveEuclidean();
+        void printSolution(std::vector<int>&);
+
 };
 
 

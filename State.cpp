@@ -4,6 +4,7 @@
 #include <queue>
 #include <map>
 #include <cmath>
+#include <string>
 
 State::State(int n)
 {
@@ -23,6 +24,8 @@ State::State(const State &rhs)
     this->n = rhs.n;
     this->blank = rhs.blank;
     this->moves = rhs.moves;
+    this->misplaced = rhs.misplaced;
+    this->euclidean = rhs.euclidean;
 }
 
 State::~State()
@@ -116,7 +119,6 @@ void State::printState()
         }
         std::cout << std::endl;
     }
-    std::cout << std::endl;
 }
 
 bool State::check()
@@ -203,25 +205,38 @@ struct Euclidean
     }
 };
 
-void State::solveUniform(std::vector<int> &moves)
+void State::solveUniform()
 {
     std::priority_queue<State, std::vector<State>, Uniform> pq;
     pq.push(*this);
     int count = 0;
+    int max = 1;
+
+    std::cout << "Expanding state: \n";
+    this->printState();
 
     while (!pq.empty())
     {
+        if (pq.size() > max)
+        {
+            max = pq.size();
+        }
         State curr = pq.top();
         pq.pop();
-        std::cout << "Expanding state: " << std::endl;
 
         if (curr.check())
         {
-            std::cout << "solution found " << std::endl;
+            std::cout << "Solution found \n\nThe solution is: \n";
+            printSolution(curr.moves);
+            std::cout << "\nThe maximum number of nodes in a queue at any one time: " << max << std::endl;
+            std::cout << "The depth of the goal node was " << curr.moves.size() << std::endl;
             return;
         }
         else
         {
+            std::cout << "The next state to expand in the uniform cost search is: \n";
+            curr.printState();
+            std::cout << "Expanding this node \n\n";
             for (int i = 0; i < 4; ++i)
             {
                 State newState = State(curr);
@@ -234,26 +249,40 @@ void State::solveUniform(std::vector<int> &moves)
     }
 }
 
-void State::solveMisplaced(std::vector<int> &moves)
+void State::solveMisplaced()
 {
     std::priority_queue<State, std::vector<State>, Misplaced> pq;
-
+    this->setMisplaced();
+    this->moves = {};
     pq.push(*this);
     int count = 0;
+    int max = 1;
+
+    std::cout << "Expanding state: \n";
+    this->printState();
 
     while (!pq.empty())
     {
+        if (pq.size() > max)
+        {
+            max = pq.size();
+        }
         State curr = pq.top();
         pq.pop();
-        // curr.printState();
 
         if (curr.check())
         {
-            std::cout << "solution found " << std::endl;
+            std::cout << "Solution found \n\nThe solution is: \n";
+            printSolution(curr.moves);
+            std::cout << "\nThe maximum number of nodes in a queue at any one time: " << max << std::endl;
+            std::cout << "The depth of the goal node was " << curr.moves.size() << std::endl;
             return;
         }
         else
         {
+            std::cout << "The best state to expand next with g(n) = " << curr.getMoves() << " and h(n) = " << curr.getMisplaced() << " is: \n";
+            curr.printState();
+            std::cout << "Expanding this node \n\n";
             for (int i = 0; i < 4; ++i)
             {
                 State newState = State(curr);
@@ -267,33 +296,58 @@ void State::solveMisplaced(std::vector<int> &moves)
     }
 }
 
-void State::solveEuclidean(std::vector<int> &moves)
+void State::solveEuclidean()
 {
     std::priority_queue<State, std::vector<State>, Euclidean> pq;
 
+    this->setEuclidean();
     pq.push(*this);
     int count = 0;
+    int max = 1;
+
+    std::cout << "Expanding state: " << std::endl;
+    this->printState();
 
     while (!pq.empty())
     {
+        if (pq.size() > max)
+        {
+            max = pq.size();
+        }
         State curr = pq.top();
         pq.pop();
 
         if (curr.check())
         {
-            std::cout << "solution found " << std::endl;
+            std::cout << "Solution found \n\nThe solution is: \n";
+            printSolution(curr.moves);
+            std::cout << "\nThe maximum number of nodes in a queue at any one time: " << max << std::endl;
+            std::cout << "The depth of the goal node was " << curr.moves.size() << std::endl;
             return;
         }
         else
         {
+            std::cout << "The best state to expand next with g(n) = " << curr.getMoves() << " and h(n) = " << curr.getEuclidean() << std::endl;
+            curr.printState();
+            std::cout << "Expanding this node" << std::endl;
             for (int i = 0; i < 4; ++i)
             {
                 State newState = State(curr);
                 if (curr.move(i, newState))
                 {
+                    newState.setEuclidean();
                     pq.push(newState);
                 }
             }
         }
+    }
+}
+
+void State::printSolution(std::vector<int> &sol)
+{
+    std::string moves = "NESW";
+    for (unsigned int i = 0; i < sol.size(); ++i)
+    {
+        std::cout << moves[i] << " ";
     }
 }
