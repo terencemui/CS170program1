@@ -5,11 +5,12 @@
 #include <map>
 #include <cmath>
 #include <string>
+#include <set>
 
 State::State(int n)
 {
     this->n = n;
-    board.reserve(n);
+    board.reserve(n*n);
     for (int i = 0; i < n * n - 1; ++i)
     {
         board.push_back(i + 1);
@@ -32,7 +33,7 @@ State::~State()
 {
 }
 
-void State::createBoard(std::vector<int>& board)
+void State::createBoard(std::vector<int> &board)
 {
     this->board = board;
     for (unsigned int i = 0; i < board.size(); ++i)
@@ -224,6 +225,8 @@ void State::solveUniform()
     int count = 0;
     int max = 1;
 
+    std::set<std::vector<int>> visited;
+
     std::cout << "Expanding state: \n";
     this->printState();
 
@@ -244,8 +247,9 @@ void State::solveUniform()
             std::cout << "The depth of the goal node was " << curr.moves.size() << std::endl;
             return;
         }
-        else
+        else if (!visited.contains(curr.board)) // if it hasn't been visited
         {
+            visited.insert(board);
             std::cout << "The next state to expand in the uniform cost search is: \n";
             curr.printState();
             std::cout << "Expanding this node \n\n";
@@ -270,6 +274,8 @@ void State::solveMisplaced()
     int count = 0;
     int max = 1;
 
+    std::set<std::vector<int>> visited;
+
     std::cout << "Expanding state: \n";
     this->printState();
 
@@ -290,7 +296,7 @@ void State::solveMisplaced()
             std::cout << "The depth of the goal node was " << curr.moves.size() << std::endl;
             return;
         }
-        else
+        else if (!visited.contains(curr.board)) // if it hasn't been visited
         {
             std::cout << "The best state to expand next with g(n) = " << curr.getMoves() << " and h(n) = " << curr.getMisplaced() << " is: \n";
             curr.printState();
@@ -317,6 +323,8 @@ void State::solveEuclidean()
     int count = 0;
     int max = 1;
 
+    std::set<std::vector<int>> visited;
+
     std::cout << "Expanding state: " << std::endl;
     this->printState();
 
@@ -337,7 +345,7 @@ void State::solveEuclidean()
             std::cout << "The depth of the goal node was " << curr.moves.size() << std::endl;
             return;
         }
-        else
+        else if (!visited.contains(curr.board)) // if it hasn't been visited
         {
             std::cout << "The best state to expand next with g(n) = " << curr.getMoves() << " and h(n) = " << curr.getEuclidean() << std::endl;
             curr.printState();
@@ -360,6 +368,6 @@ void State::printSolution(std::vector<int> &sol)
     std::string moves = "NESW";
     for (unsigned int i = 0; i < sol.size(); ++i)
     {
-        std::cout << moves[i] << " ";
+        std::cout << moves[sol[i]] << " ";
     }
 }
