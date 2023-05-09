@@ -222,7 +222,7 @@ void State::solveUniform()
 {
     std::priority_queue<State, std::vector<State>, Uniform> pq;
     pq.push(*this);
-    int count = 0;
+    int count = 1;
     int max = 1;
 
     std::set<std::vector<int>> visited;
@@ -245,10 +245,12 @@ void State::solveUniform()
             printSolution(curr.moves);
             std::cout << "\nThe maximum number of nodes in a queue at any one time: " << max << std::endl;
             std::cout << "The depth of the goal node was " << curr.moves.size() << std::endl;
+            std::cout << "Number of nodes visited: " << count << std::endl;
             return;
         }
         else if (!visited.contains(curr.board)) // if it hasn't been visited
         {
+            count++;
             visited.insert(board);
             std::cout << "The next state to expand in the uniform cost search is: \n";
             curr.printState();
@@ -294,10 +296,12 @@ void State::solveMisplaced()
             printSolution(curr.moves);
             std::cout << "\nThe maximum number of nodes in a queue at any one time: " << max << std::endl;
             std::cout << "The depth of the goal node was " << curr.moves.size() << std::endl;
+            std::cout << "Number of nodes visited: " << count << std::endl;
             return;
         }
         else if (!visited.contains(curr.board)) // if it hasn't been visited
         {
+            count++;
             std::cout << "The best state to expand next with g(n) = " << curr.getMoves() << " and h(n) = " << curr.getMisplaced() << " is: \n";
             curr.printState();
             std::cout << "Expanding this node \n\n";
@@ -343,10 +347,12 @@ void State::solveEuclidean()
             printSolution(curr.moves);
             std::cout << "\nThe maximum number of nodes in a queue at any one time: " << max << std::endl;
             std::cout << "The depth of the goal node was " << curr.moves.size() << std::endl;
+            std::cout << "Number of nodes visited: " << count << std::endl;
             return;
         }
         else if (!visited.contains(curr.board)) // if it hasn't been visited
         {
+            count++;
             std::cout << "The best state to expand next with g(n) = " << curr.getMoves() << " and h(n) = " << curr.getEuclidean() << std::endl;
             curr.printState();
             std::cout << "Expanding this node" << std::endl;
