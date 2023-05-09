@@ -56,10 +56,15 @@ int main()
             bingbong.solveUniform(); 
         }
      }
+// mystery testing option
+    if (option == 3){
+        std::vector<int>vec = {8, 7, 1, 6, -1, 2, 5, 4, 3}; 
+        State pur(3,vec);
 
-    //  if (option == 3){
-    //     State veryEasy(3,)); 
-    //  }
+        pur.solveUniform(); 
+        // pur.solveEuclidean(); 
+        // pur.solveMisplaced();  
+    }
 
      return 0; 
 
