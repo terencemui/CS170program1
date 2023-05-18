@@ -44,6 +44,7 @@ int main()
                 board.push_back(curr); 
             }
 
+
         State bingbong(dim);
         bingbong.createBoard(board); 
         std::cout << "Please enter which way you would like to solve the puzzle (1: euclidean, 2: misplaced, 3: uniform):" << std::endl; 
@@ -57,10 +58,15 @@ int main()
             bingbong.solveUniform(); 
         }
      }
+// mystery testing option
+    if (option == 3){
+        std::vector<int>vec = {8, 7, 1, 6, -1, 2, 5, 4, 3}; 
+        State pur(3,vec);
 
-    //  if (option == 3){
-    //     State veryEasy(3,)); 
-    //  }
+        pur.solveUniform(); 
+        // pur.solveEuclidean(); 
+        // pur.solveMisplaced();  
+    }
 
      return 0; 
 

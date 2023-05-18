@@ -9,15 +9,32 @@
 
 State::State(int n)
 {
+    
     this->n = n;
-    board.reserve(n*n);
+    this->board.reserve(n*n);
+
     for (int i = 0; i < n * n - 1; ++i)
     {
         board.push_back(i + 1);
     }
     board.push_back(-1);
-    blank = n * n - 1;
+    this->blank = n * n - 1;
 }
+
+State::State(int n, std::vector<int> b)
+{
+    this->board.reserve(n*n); 
+    this->n = n;
+    for (unsigned int i = 0; i < b.size(); i++){
+        this->board.push_back(b[i]);
+        if (b[i] == -1){
+            this->blank = i; 
+        } 
+    }
+
+}
+
+
 
 State::State(const State &rhs)
 {
@@ -283,6 +300,7 @@ void State::solveMisplaced()
 
     while (!pq.empty())
     {
+        
         if (pq.size() > max)
         {
             max = pq.size();
